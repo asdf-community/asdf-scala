@@ -38,6 +38,13 @@ get_download_file_path() {
   echo "$tmp_download_dir/$pkg_name"
 }
 
+get_url_status() {
+  local url="$1"
+  local status="$(curl -s -I "$url" | grep 'HTTP/1.1' | awk '{print $2}')"
+
+  echo "$status"
+}
+
 get_download_url() {
   local install_type=$1
   local version=$2
@@ -50,23 +57,22 @@ get_download_url() {
   local baseurl_scalalang_v2="http://www.scala-lang.org/files/archive/scala-${version2}.tgz"
   local baseurl_scalalang2_v2="http://www.scala-lang.org/files/archive/scala-${version2}.tar.gz"
 
-  if [[ "x200" == "x$(curl -s -I "$baseurl_lightbend" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
-    echo "$baseurl_lightbend"
-  elif [[ "x200" == "x$(curl -s -I "$baseurl_lightbend2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
-    echo "$baseurl_lightbend2"
-  elif [[ "x200" == "x$(curl -s -I "$baseurl_scalalang" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  if [[ "x200" == "x$(get_url_status "$baseurl_lightbend")" ]]; then
+    echo "$baseurl_lightbend" 
+  elif [[ "x200" == "x$(get_url_status "$baseurl_lightbend2")" ]]; then
+    echo "$baseurl_lightbend2" 
+  elif [[ "x200" == "x$(get_url_status "$baseurl_scalalang")" ]]; then
     echo "$baseurl_scalalang"
-  elif [[ "x200" == "x$(curl -s -I $baseurl_lightbend | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  elif [[ "x200" == "x$(get_url_status "$baseurl_scalalang2")" ]]; then
     echo "$baseurl_scalalang2"
-  elif [[ "x200" == "x$(curl -s -I "$baseurl_scalalang_v2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  elif [[ "x200" == "x$(get_url_status "$baseurl_scalalang_v2")" ]]; then
     echo "$baseurl_scalalang_v2"
-  elif [[ "x200" == "x$(curl -s -I "$baseurl_scalalang2_v2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  elif [[ "x200" == "x$(get_url_status "$baseurl_scalalang2_v2")" ]]; then
     echo "$baseurl_scalalang2_v2"
   else
     echo "Distribution file not found. Exiting"
     exit 1
-  fi
-  
+  fi  
 }
 
 install_scala $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
