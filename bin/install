@@ -41,10 +41,10 @@ get_download_file_path() {
 get_download_url() {
   local install_type=$1
   local version=$2
-  local baseurl_lightbend="https://downloads.lightbend.com/scala/${version}/scala-${version}.tgz"
-  local baseurl_lightbend2="https://downloads.lightbend.com/scala/${version}/scala-${version}.tar.gz"
-  local baseurl_scalalang="https://www.scala-lang.org/files/archive/scala-${version}.tgz"
-  local baseurl_scalalang2="https://www.scala-lang.org/files/archive/scala-${version}.tar.gz"
+  local baseurl_lightbend="http://downloads.lightbend.com/scala/${version}/scala-${version}.tgz"
+  local baseurl_lightbend2="http://downloads.lightbend.com/scala/${version}/scala-${version}.tar.gz"
+  local baseurl_scalalang="http://www.scala-lang.org/files/archive/scala-${version}.tgz"
+  local baseurl_scalalang2="http://www.scala-lang.org/files/archive/scala-${version}.tar.gz"
 
   if [[ "x200" == "x$(curl -s -I "$baseurl_lightbend" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_lightbend"
