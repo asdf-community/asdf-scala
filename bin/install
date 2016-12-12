@@ -46,6 +46,10 @@ get_download_url() {
   local baseurl_scalalang="http://www.scala-lang.org/files/archive/scala-${version}.tgz"
   local baseurl_scalalang2="http://www.scala-lang.org/files/archive/scala-${version}.tar.gz"
 
+  local version2="$(echo $version | sed -e 's/.final/-final/g')"  
+  local baseurl_scalalang_v2="http://www.scala-lang.org/files/archive/scala-${version2}.tgz"
+  local baseurl_scalalang2_v2="http://www.scala-lang.org/files/archive/scala-${version2}.tar.gz"
+
   if [[ "x200" == "x$(curl -s -I "$baseurl_lightbend" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_lightbend"
   elif [[ "x200" == "x$(curl -s -I "$baseurl_lightbend2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
@@ -54,6 +58,10 @@ get_download_url() {
     echo "$baseurl_scalalang"
   elif [[ "x200" == "x$(curl -s -I $baseurl_lightbend | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_scalalang2"
+  elif [[ "x200" == "x$(curl -s -I "$baseurl_scalalang_v2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+    echo "$baseurl_scalalang_v2"
+  elif [[ "x200" == "x$(curl -s -I "$baseurl_scalalang2_v2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+    echo "$baseurl_scalalang2_v2"
   else
     echo "Distribution file not found. Exiting"
     exit 1
