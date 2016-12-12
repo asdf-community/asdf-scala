@@ -12,7 +12,6 @@ install_scala() {
   fi
 
   local source_path=$(get_download_file_path $install_type $version $tmp_download_dir)
-  echo $source_path
   download_source_file $install_type $version $source_path
 
   (
@@ -42,18 +41,18 @@ get_download_file_path() {
 get_download_url() {
   local install_type=$1
   local version=$2
-  local baseurl_lightbend="https://downloads/lightbend.com/scala/${version}/scala-${version}.tgz"
-  local baseurl_lightbend2="https://downloads/lightbend.com/scala/${version}/scala-${version}.tar.gz"
+  local baseurl_lightbend="https://downloads.lightbend.com/scala/${version}/scala-${version}.tgz"
+  local baseurl_lightbend2="https://downloads.lightbend.com/scala/${version}/scala-${version}.tar.gz"
   local baseurl_scalalang="https://www.scala-lang.org/files/archive/scala-${version}.tgz"
   local baseurl_scalalang2="https://www.scala-lang.org/files/archive/scala-${version}.tar.gz"
 
-  if [[ "x200" == "$(curl -s -I "$baseurl_lightbend" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  if [[ "x200" == "x$(curl -s -I "$baseurl_lightbend" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_lightbend"
-  elif [[ "x200" == "$(curl -s -I "$baseurl_lightbend2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  elif [[ "x200" == "x$(curl -s -I "$baseurl_lightbend2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_lightbend2"
-  elif [[ "x200" == "$(curl -s -I "$baseurl_scalalang" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  elif [[ "x200" == "x$(curl -s -I "$baseurl_scalalang" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_scalalang"
-  elif [[ "x200" == "$(curl -s -I $baseurl_lightbend | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+  elif [[ "x200" == "x$(curl -s -I $baseurl_lightbend | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
     echo "$baseurl_scalalang2"
   else
     echo "Distribution file not found. Exiting"
