@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+install_scala() {
+  local install_type=$1
+  local version=$2
+  local install_path=$3
+
+  if [ "$TMPDIR" = "" ]; then
+    local tmp_download_dir=$(mktemp -d)
+  else
+    local tmp_download_dir=$TMPDIR
+  fi
+
+  local source_path=$(get_download_file_path $install_type $version $tmp_download_dir)
+  echo $source_path
+  download_source_file $install_type $version $source_path
+
+  (
+    tar zxf $source_path -C $install_path --strip-components=1 || exit 1
+  )
+}
+
+download_source_file() {
+  local install_type=$1
+  local version=$2
+  local download_path=$3
+  local download_url=$(get_download_url $install_type $version)
+
+  curl -Lo $download_path -C - $download_url
+}
+
+get_download_file_path() {
+  local install_type=$1
+  local version=$2
+  local tmp_download_dir=$3
+
+  local pkg_name="scala-${version}.tgz"
+
+  echo "$tmp_download_dir/$pkg_name"
+}
+
+get_download_url() {
+  local install_type=$1
+  local version=$2
+  local baseurl_lightbend="https://downloads/lightbend.com/scala/${version}/scala-${version}.tgz"
+  local baseurl_lightbend2="https://downloads/lightbend.com/scala/${version}/scala-${version}.tar.gz"
+  local baseurl_scalalang="https://www.scala-lang.org/files/archive/scala-${version}.tgz"
+  local baseurl_scalalang2="https://www.scala-lang.org/files/archive/scala-${version}.tar.gz"
+
+  if [[ "x200" == "$(curl -s -I "$baseurl_lightbend" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+    echo "$baseurl_lightbend"
+  elif [[ "x200" == "$(curl -s -I "$baseurl_lightbend2" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+    echo "$baseurl_lightbend2"
+  elif [[ "x200" == "$(curl -s -I "$baseurl_scalalang" | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+    echo "$baseurl_scalalang"
+  elif [[ "x200" == "$(curl -s -I $baseurl_lightbend | grep 'HTTP/1.1' | awk '{print $2}')" ]]; then
+    echo "$baseurl_scalalang2"
+  else
+    echo "Distribution file not found. Exiting"
+    exit 1
+  fi
+  
+}
+
+install_scala $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
