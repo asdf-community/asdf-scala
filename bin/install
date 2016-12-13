@@ -5,6 +5,28 @@ install_scala() {
   local version=$2
   local install_path=$3
 
+  if ! which java >/dev/null; then
+    echo "You need a Java Runtime already installed on your computer."
+    echo "Follow the instructions for your platform or download it"
+    echo "from http://java.com/en/download"
+    exit 1
+  fi
+
+  if [ "version" != "${install_type}" ]; then
+    echo "The asdf-scala plugin only supports installing official "
+    echo "binary releases as built by the Scala team."
+    echo "If you want to install another version from source, see: "
+    echo "https://github.com/scala/scala/"
+    exit 1
+  fi
+
+  local url_download="$(get_download_url $install_type $version)"
+
+  if [ "Distribution file not found. Exiting" == "${url_download}" ]; then
+    echo "The version specified was not found. Exiting"
+    exit 1
+  fi
+
   if [ "$TMPDIR" = "" ]; then
     local tmp_download_dir=$(mktemp -d)
   else
@@ -12,7 +34,7 @@ install_scala() {
   fi
 
   local source_path=$(get_download_file_path $install_type $version $tmp_download_dir)
-  download_source_file $install_type $version $source_path
+  download_source_file_url "$url_download" $source_path
 
   (
     tar zxf $source_path -C $install_path --strip-components=1 || exit 1
@@ -28,6 +50,12 @@ download_source_file() {
   curl -Lo $download_path -C - $download_url
 }
 
+download_source_file_url() {
+  local url=$1
+  local download_path=$2
+
+  curl -Lo $download_path -C - $url
+}
 get_download_file_path() {
   local install_type=$1
   local version=$2
