@@ -1,5 +1,9 @@
 language: c
-script: asdf plugin-test scala https://github.com/mtatheonly/asdf-scala.git
+script: 
+  - bin/list-all
+  - asdf plugin-add scala ./
+  - asdf list-all scala
+  - asdf plugin-test scala https://github.com/mtatheonly/asdf-scala.git 'scala -version'
 before_script:
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
