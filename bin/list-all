@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-curl -s https://www.scala-lang.org/download/all.html | \
-    grep 'download/' | grep 'Scala' | grep -v 'development' | \
-    awk -F'"' '{print $2}' | awk -F'/' '{print $3}' | \
-    sed -e 's/.html//g' | sed -e 's/\n/ /g' | tr '\n' ' '
-echo ""
+
+get_scala_versions() {
+curl -s https://www.scala-lang.org/download/all.html \
+  | grep '/download.*Scala' \
+  | grep -v 'develop' \
+  | sed -e 's|.*download/\(.*\)\.html.*|\1|'
+}
+
+if [[ "$(uname)" == "Darwin" ]]; then
+  get_scala_versions | rev | tr "\n" " "
+else
+  get_scala_versions | tac | tr "\n" " "
+fi
