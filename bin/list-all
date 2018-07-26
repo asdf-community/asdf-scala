@@ -7,8 +7,4 @@ curl -s https://www.scala-lang.org/download/all.html \
   | sed -e 's|.*download/\(.*\)\.html.*|\1|'
 }
 
-if [[ "$(uname)" == "Darwin" ]]; then
-  get_scala_versions | rev | tr "\n" " "
-else
-  get_scala_versions | tac | tr "\n" " "
-fi
+get_scala_versions | sort | tr "\n" " "
