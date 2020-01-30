@@ -5,7 +5,7 @@ script:
   - asdf list-all scala
   - asdf plugin-test scala https://github.com/mtatheonly/asdf-scala.git 'scala -version'
 before_script:
-  - git clone https://github.com/asdf-vm/asdf.git --branch v0.2.0
+  - git clone https://github.com/asdf-vm/asdf.git --branch v0.7.5
   - . asdf/asdf.sh
 os:
   - linux
