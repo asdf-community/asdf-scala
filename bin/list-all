@@ -7,4 +7,31 @@ curl -s https://www.scala-lang.org/download/all.html \
   | sed -e 's|.*download/\(.*\)\.html.*|\1|'
 }
 
-get_scala_versions | sort | tr "\n" " "
+versions_list="$(get_scala_versions | sort | tr "\n" " ")"
+
+# sort versions with code from https://gist.github.com/andkirby/54204328823febad9d34422427b1937b
+version_weight () {
+  echo -e "$1" | tr ' ' "\n"  | sed -e 's:\+.*$::' | sed -e 's:^v::' | \
+    sed -re 's:^[0-9]+(\.[0-9]+)+$:&-stable:' | \
+    sed -re 's:([^a-zA-Z])dev\.?([^a-zA-Z]|$):\1.10.\2:g' | \
+    sed -re 's:([^a-zA-Z])(alpha|a)\.?([^a-zA-Z]|$):\1.20.\3:g' | \
+    sed -re 's:([^a-zA-Z])(beta|b)\.?([^a-zA-Z]|$):\1.30.\3:g' | \
+    sed -re 's:([^a-zA-Z])(rc|RC)\.?([^a-zA-Z]|$)?:\1.40.\3:g' | \
+    sed -re 's:([^a-zA-Z])stable\.?([^a-zA-Z]|$):\1.50.\2:g' | \
+    sed -re 's:([^a-zA-Z])pl\.?([^a-zA-Z]|$):\1.60.\2:g' | \
+    sed -re 's:([^a-zA-Z])(patch|p)\.?([^a-zA-Z]|$):\1.70.\3:g' | \
+    sed -r 's:\.{2,}:.:' | \
+    sed -r 's:\.$::' | \
+    sed -r 's:-\.:.:'
+}
+tags_orig=(${versions_list})
+tags_weight=( $(version_weight "${tags_orig[*]}") )
+
+keys=$(for ix in ${!tags_weight[*]}; do
+    printf "%s+%s\n" "${tags_weight[${ix}]}" ${ix}
+done | sort -V | cut -d+ -f2)
+
+for ix in ${keys}; do
+    printf "%s\n" ${tags_orig[${ix}]}
+done
+
