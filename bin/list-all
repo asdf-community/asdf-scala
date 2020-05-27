@@ -32,6 +32,6 @@ keys=$(for ix in ${!tags_weight[*]}; do
 done | sort -V | cut -d+ -f2)
 
 for ix in ${keys}; do
-    printf "%s\n" ${tags_orig[${ix}]}
+    printf "%s " ${tags_orig[${ix}]}
 done
 
