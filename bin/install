@@ -70,9 +70,16 @@ get_download_url() {
   local install_type=$1
   local version=$2
 
-  local download_page="https://scala-lang.org/download/$version.html"
-  local download_url="$(curl -s $download_page | grep 'link-main-unixsys' | sed -E 's/(.*)(href=")(.*)(">)/\3/g')"
-  echo $download_url
+  case "$version" in
+    3.*)
+      echo "https://github.com/lampepfl/dotty/releases/download/$version/scala3-$version.tar.gz"
+      ;;
+    *)
+      local download_page="https://scala-lang.org/download/$version.html"
+      local download_url="$(curl -s $download_page | grep 'link-main-unixsys' | sed -E 's/(.*)(href=")(.*)(">)/\3/g')"
+      echo $download_url
+      ;;
+  esac
 }
 
 install_scala $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
