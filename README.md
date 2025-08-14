@@ -21,13 +21,13 @@ scala:
 
 ```shell
 # Show all installable versions
-asdf list-all scala
+asdf list all scala
 
 # Install specific version
 asdf install scala latest
 
 # Set a version globally (on your ~/.tool-versions file)
-asdf global scala latest
+asdf set -u scala latest
 
 # Now scala commands are available
 scala -help
